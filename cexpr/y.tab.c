@@ -117,15 +117,15 @@ int g_error;    /* 0 = none, 1 = overflow, 2 = dividebyzero */
 int yylex(void);
 void yyerror(const char *s);
 
-/* Clamps a wide result back down to int range, flagging overflow. */
+/* Flags overflow */
 static int clamp(long long r) {
     if (r > INT_MAX || r < INT_MIN) { g_error = 1; return 0; }
     return (int)r;
 }
 
  /*
- ** Arithmetic/bitwise helpers, one per operator. Each bails out early
- ** (returning 0) if an error already happened earlier in the calculation.
+ ** Arithmetic/bitwise helpers, one per operator. Each exits early
+ ** if an error already happened
  */
 static int op_add(int a, int b) { if (g_error) return 0; return clamp((long long)a + b); }
 static int op_sub(int a, int b) { if (g_error) return 0; return clamp((long long)a - b); }
@@ -152,14 +152,14 @@ static int op_mod(int a, int b) {
     return a % b;
 }
 
-/* Prints all 26 variables, "a" through "z". */
+/* Prints all 26 variables, a through z */
 static void dump_vars(void) {
     int i;
     for (i = 0; i < 26; i++)
         printf("%c: %d\n", 'a' + i, vars[i]);
 }
 
-/* Resets all 26 variables back to 0. */
+/* Resets all 26 variables back to 0 */
 static void clear_vars(void) {
     int i;
     for (i = 0; i < 26; i++)
@@ -506,11 +506,11 @@ static const yytype_int8 yyrhs[] =
 /* YYRLINE[YYN] -- source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    81,    81,    83,    86,    93,    94,    98,   107,   108,
-     109,   110,   111,   112,   113,   114,   115,   116,   117,   118,
-     123,   124,   127,   128,   131,   132,   135,   136,   137,   140,
-     141,   142,   145,   146,   147,   148,   152,   153,   154,   157,
-     158,   163
+       0,    81,    81,    83,    86,    93,    94,    98,   101,   102,
+     103,   104,   105,   106,   107,   108,   109,   110,   111,   112,
+     117,   118,   121,   122,   125,   126,   129,   130,   131,   134,
+     135,   136,   139,   140,   141,   142,   145,   146,   147,   150,
+     151,   156
 };
 #endif
 
@@ -1459,7 +1459,7 @@ yyreduce:
         case 4:
 #line 87 "cexpr.y"
     {
-		  /* Print the result, or the first error hit along the way. */
+		  /* Print the result, or the first error hit along the way */
 		  if (g_error == 1)      printf("overflow\n");
 		  else if (g_error == 2) printf("dividebyzero\n");
 		  else                   printf("%d\n", (yyvsp[(2) - (3)].ival));
@@ -1482,167 +1482,167 @@ yyreduce:
     break;
 
   case 8:
-#line 107 "cexpr.y"
+#line 101 "cexpr.y"
     { if (!g_error) vars[(yyvsp[(1) - (3)].ival)] = (yyvsp[(3) - (3)].ival);                  (yyval.ival) = (yyvsp[(3) - (3)].ival); }
     break;
 
   case 9:
-#line 108 "cexpr.y"
+#line 102 "cexpr.y"
     { int r = op_add(vars[(yyvsp[(1) - (3)].ival)], (yyvsp[(3) - (3)].ival)); if (!g_error) vars[(yyvsp[(1) - (3)].ival)] = r; (yyval.ival) = r; }
     break;
 
   case 10:
-#line 109 "cexpr.y"
+#line 103 "cexpr.y"
     { int r = op_sub(vars[(yyvsp[(1) - (3)].ival)], (yyvsp[(3) - (3)].ival)); if (!g_error) vars[(yyvsp[(1) - (3)].ival)] = r; (yyval.ival) = r; }
     break;
 
   case 11:
-#line 110 "cexpr.y"
+#line 104 "cexpr.y"
     { int r = op_mul(vars[(yyvsp[(1) - (3)].ival)], (yyvsp[(3) - (3)].ival)); if (!g_error) vars[(yyvsp[(1) - (3)].ival)] = r; (yyval.ival) = r; }
     break;
 
   case 12:
-#line 111 "cexpr.y"
+#line 105 "cexpr.y"
     { int r = op_div(vars[(yyvsp[(1) - (3)].ival)], (yyvsp[(3) - (3)].ival)); if (!g_error) vars[(yyvsp[(1) - (3)].ival)] = r; (yyval.ival) = r; }
     break;
 
   case 13:
-#line 112 "cexpr.y"
+#line 106 "cexpr.y"
     { int r = op_mod(vars[(yyvsp[(1) - (3)].ival)], (yyvsp[(3) - (3)].ival)); if (!g_error) vars[(yyvsp[(1) - (3)].ival)] = r; (yyval.ival) = r; }
     break;
 
   case 14:
-#line 113 "cexpr.y"
+#line 107 "cexpr.y"
     { int r = op_shl(vars[(yyvsp[(1) - (3)].ival)], (yyvsp[(3) - (3)].ival)); if (!g_error) vars[(yyvsp[(1) - (3)].ival)] = r; (yyval.ival) = r; }
     break;
 
   case 15:
-#line 114 "cexpr.y"
+#line 108 "cexpr.y"
     { int r = op_shr(vars[(yyvsp[(1) - (3)].ival)], (yyvsp[(3) - (3)].ival)); if (!g_error) vars[(yyvsp[(1) - (3)].ival)] = r; (yyval.ival) = r; }
     break;
 
   case 16:
-#line 115 "cexpr.y"
+#line 109 "cexpr.y"
     { int r = op_and(vars[(yyvsp[(1) - (3)].ival)], (yyvsp[(3) - (3)].ival)); if (!g_error) vars[(yyvsp[(1) - (3)].ival)] = r; (yyval.ival) = r; }
     break;
 
   case 17:
-#line 116 "cexpr.y"
+#line 110 "cexpr.y"
     { int r = op_xor(vars[(yyvsp[(1) - (3)].ival)], (yyvsp[(3) - (3)].ival)); if (!g_error) vars[(yyvsp[(1) - (3)].ival)] = r; (yyval.ival) = r; }
     break;
 
   case 18:
-#line 117 "cexpr.y"
+#line 111 "cexpr.y"
     { int r = op_or (vars[(yyvsp[(1) - (3)].ival)], (yyvsp[(3) - (3)].ival)); if (!g_error) vars[(yyvsp[(1) - (3)].ival)] = r; (yyval.ival) = r; }
     break;
 
   case 19:
-#line 118 "cexpr.y"
+#line 112 "cexpr.y"
     { (yyval.ival) = (yyvsp[(1) - (1)].ival); }
     break;
 
   case 20:
-#line 123 "cexpr.y"
+#line 117 "cexpr.y"
     { (yyval.ival) = op_or((yyvsp[(1) - (3)].ival), (yyvsp[(3) - (3)].ival)); }
     break;
 
   case 21:
-#line 124 "cexpr.y"
+#line 118 "cexpr.y"
     { (yyval.ival) = (yyvsp[(1) - (1)].ival); }
     break;
 
   case 22:
-#line 127 "cexpr.y"
+#line 121 "cexpr.y"
     { (yyval.ival) = op_xor((yyvsp[(1) - (3)].ival), (yyvsp[(3) - (3)].ival)); }
     break;
 
   case 23:
-#line 128 "cexpr.y"
+#line 122 "cexpr.y"
     { (yyval.ival) = (yyvsp[(1) - (1)].ival); }
     break;
 
   case 24:
-#line 131 "cexpr.y"
+#line 125 "cexpr.y"
     { (yyval.ival) = op_and((yyvsp[(1) - (3)].ival), (yyvsp[(3) - (3)].ival)); }
     break;
 
   case 25:
-#line 132 "cexpr.y"
+#line 126 "cexpr.y"
     { (yyval.ival) = (yyvsp[(1) - (1)].ival); }
     break;
 
   case 26:
-#line 135 "cexpr.y"
+#line 129 "cexpr.y"
     { (yyval.ival) = op_shl((yyvsp[(1) - (3)].ival), (yyvsp[(3) - (3)].ival)); }
     break;
 
   case 27:
-#line 136 "cexpr.y"
+#line 130 "cexpr.y"
     { (yyval.ival) = op_shr((yyvsp[(1) - (3)].ival), (yyvsp[(3) - (3)].ival)); }
     break;
 
   case 28:
-#line 137 "cexpr.y"
+#line 131 "cexpr.y"
     { (yyval.ival) = (yyvsp[(1) - (1)].ival); }
     break;
 
   case 29:
-#line 140 "cexpr.y"
+#line 134 "cexpr.y"
     { (yyval.ival) = op_add((yyvsp[(1) - (3)].ival), (yyvsp[(3) - (3)].ival)); }
     break;
 
   case 30:
-#line 141 "cexpr.y"
+#line 135 "cexpr.y"
     { (yyval.ival) = op_sub((yyvsp[(1) - (3)].ival), (yyvsp[(3) - (3)].ival)); }
     break;
 
   case 31:
-#line 142 "cexpr.y"
+#line 136 "cexpr.y"
     { (yyval.ival) = (yyvsp[(1) - (1)].ival); }
     break;
 
   case 32:
-#line 145 "cexpr.y"
+#line 139 "cexpr.y"
     { (yyval.ival) = op_mul((yyvsp[(1) - (3)].ival), (yyvsp[(3) - (3)].ival)); }
     break;
 
   case 33:
-#line 146 "cexpr.y"
+#line 140 "cexpr.y"
     { (yyval.ival) = op_div((yyvsp[(1) - (3)].ival), (yyvsp[(3) - (3)].ival)); }
     break;
 
   case 34:
-#line 147 "cexpr.y"
+#line 141 "cexpr.y"
     { (yyval.ival) = op_mod((yyvsp[(1) - (3)].ival), (yyvsp[(3) - (3)].ival)); }
     break;
 
   case 35:
-#line 148 "cexpr.y"
+#line 142 "cexpr.y"
     { (yyval.ival) = (yyvsp[(1) - (1)].ival); }
     break;
 
   case 36:
-#line 152 "cexpr.y"
+#line 145 "cexpr.y"
     { (yyval.ival) = op_not((yyvsp[(2) - (2)].ival)); }
     break;
 
   case 37:
-#line 153 "cexpr.y"
+#line 146 "cexpr.y"
     { (yyval.ival) = op_neg((yyvsp[(2) - (2)].ival)); }
     break;
 
   case 38:
-#line 154 "cexpr.y"
+#line 147 "cexpr.y"
     { (yyval.ival) = (yyvsp[(1) - (1)].ival); }
     break;
 
   case 39:
-#line 157 "cexpr.y"
+#line 150 "cexpr.y"
     { (yyval.ival) = (yyvsp[(2) - (3)].ival); }
     break;
 
   case 40:
-#line 159 "cexpr.y"
+#line 152 "cexpr.y"
     {
 		  if ((yyvsp[(1) - (1)].lval) > INT_MAX || (yyvsp[(1) - (1)].lval) < INT_MIN) { g_error = 1; (yyval.ival) = 0; }
 		  else (yyval.ival) = (int)(yyvsp[(1) - (1)].lval);
@@ -1650,7 +1650,7 @@ yyreduce:
     break;
 
   case 41:
-#line 163 "cexpr.y"
+#line 156 "cexpr.y"
     { (yyval.ival) = vars[(yyvsp[(1) - (1)].ival)]; }
     break;
 
@@ -1870,7 +1870,7 @@ yyreturn:
 }
 
 
-#line 166 "cexpr.y"
+#line 159 "cexpr.y"
 
 
 int main(void) {

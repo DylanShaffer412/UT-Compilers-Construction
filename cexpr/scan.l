@@ -1,8 +1,8 @@
     /*
     ** Dylan Shaffer
     ** COSC 561
-    ** cexpr
     */
+
 %{
 #include <stdlib.h>
 #include "y.tab.h"

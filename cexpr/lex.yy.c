@@ -472,12 +472,11 @@ char *yytext;
     /*
     ** Dylan Shaffer
     ** COSC 561
-    ** cexpr
     */
 #include <stdlib.h>
 #include "y.tab.h"
+#line 478 "lex.yy.c"
 #line 479 "lex.yy.c"
-#line 480 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -697,7 +696,7 @@ YY_DECL
 #line 11 "scan.l"
 
 
-#line 700 "lex.yy.c"
+#line 699 "lex.yy.c"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -855,7 +854,7 @@ YY_RULE_SETUP
 #line 39 "scan.l"
 ECHO;
 	YY_BREAK
-#line 858 "lex.yy.c"
+#line 857 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 

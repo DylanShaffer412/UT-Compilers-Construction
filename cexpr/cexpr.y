@@ -1,8 +1,8 @@
     /*
     ** Dylan Shaffer
     ** COSC 561
-    ** cexpr
     */
+
 %{
 #include <stdio.h>
 #include <limits.h>
@@ -13,15 +13,15 @@ int g_error;    /* 0 = none, 1 = overflow, 2 = dividebyzero */
 int yylex(void);
 void yyerror(const char *s);
 
-/* Clamps a wide result back down to int range, flagging overflow. */
+/* Flags overflow */
 static int clamp(long long r) {
     if (r > INT_MAX || r < INT_MIN) { g_error = 1; return 0; }
     return (int)r;
 }
 
  /*
- ** Arithmetic/bitwise helpers, one per operator. Each bails out early
- ** (returning 0) if an error already happened earlier in the calculation.
+ ** Arithmetic/bitwise helpers, one per operator. Each exits early
+ ** if an error already happened
  */
 static int op_add(int a, int b) { if (g_error) return 0; return clamp((long long)a + b); }
 static int op_sub(int a, int b) { if (g_error) return 0; return clamp((long long)a - b); }
@@ -48,14 +48,14 @@ static int op_mod(int a, int b) {
     return a % b;
 }
 
-/* Prints all 26 variables, "a" through "z". */
+/* Prints all 26 variables, a through z */
 static void dump_vars(void) {
     int i;
     for (i = 0; i < 26; i++)
         printf("%c: %d\n", 'a' + i, vars[i]);
 }
 
-/* Resets all 26 variables back to 0. */
+/* Resets all 26 variables back to 0 */
 static void clear_vars(void) {
     int i;
     for (i = 0; i < 26; i++)
@@ -85,7 +85,7 @@ commands:
 
 command	:	mark expr ';'
 		{
-		  /* Print the result, or the first error hit along the way. */
+		  /* Print the result, or the first error hit along the way */
 		  if (g_error == 1)      printf("overflow\n");
 		  else if (g_error == 2) printf("dividebyzero\n");
 		  else                   printf("%d\n", $2);
@@ -94,16 +94,10 @@ command	:	mark expr ';'
 	|	CLEAR ';' { clear_vars(); }
 	;
 
-/* Empty rule that fires before each expr, resetting the error flag. */
+/* Empty rule that fires before each expr, resetting the error flag */
 mark	:	/* empty */ { g_error = 0; }
 	;
 
- /*
- ** Assignment sits above the rest of the operator ladder, is right
- ** associative, and only ever chains into itself or into an or_expr -
- ** never back down into a bare operator - which is how "no operator may
- ** precede an assignment" ends up enforced by the grammar itself.
- */
 expr	:	VAR '='    expr { if (!g_error) vars[$1] = $3;                  $$ = $3; }
 	|	VAR PLUSEQ expr { int r = op_add(vars[$1], $3); if (!g_error) vars[$1] = r; $$ = r; }
 	|	VAR MINUSEQ expr { int r = op_sub(vars[$1], $3); if (!g_error) vars[$1] = r; $$ = r; }
@@ -118,7 +112,7 @@ expr	:	VAR '='    expr { if (!g_error) vars[$1] = $3;                  $$ = $3; 
 	|	or_expr         { $$ = $1; }
 	;
 
-/* Precedence ladder below, one level per nonterminal, lowest first. */
+/* Precedence ladder below, one level per nonterminal, lowest first */
 
 or_expr	:	or_expr '|' xor_expr { $$ = op_or($1, $3); }
 	|	xor_expr             { $$ = $1; }
@@ -148,7 +142,6 @@ mul_expr:	mul_expr '*' unary_expr { $$ = op_mul($1, $3); }
 	|	unary_expr              { $$ = $1; }
 	;
 
-/* Highest precedence: unary operators, then parens/literals/variables. */
 unary_expr:	'~' unary_expr { $$ = op_not($2); }
 	|	'-' unary_expr { $$ = op_neg($2); }
 	|	primary        { $$ = $1; }
