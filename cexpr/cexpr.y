@@ -74,7 +74,7 @@ static void clear_vars(void) {
 %token SHL SHR
 %token PLUSEQ MINUSEQ MULEQ DIVEQ MODEQ SHLEQ SHREQ ANDEQ XOREQ OREQ
 
-%type <ival> expr or_expr xor_expr and_expr shift_expr add_expr mul_expr unary_expr primary
+%type <ival> expr or_expr xor_expr and_expr shift_expr add_expr mul_expr neg_expr not_expr primary
 
 %%
 
@@ -136,16 +136,19 @@ add_expr:	add_expr '+' mul_expr { $$ = op_add($1, $3); }
 	|	mul_expr              { $$ = $1; }
 	;
 
-mul_expr:	mul_expr '*' unary_expr { $$ = op_mul($1, $3); }
-	|	mul_expr '/' unary_expr { $$ = op_div($1, $3); }
-	|	mul_expr '%' unary_expr { $$ = op_mod($1, $3); }
-	|	unary_expr              { $$ = $1; }
-	;
+mul_expr:    mul_expr '*' neg_expr { $$ = op_mul($1, $3); }
+    |    mul_expr '/' neg_expr { $$ = op_div($1, $3); }
+    |    mul_expr '%' neg_expr { $$ = op_mod($1, $3); }
+    |    neg_expr              { $$ = $1; }
+    ;
 
-unary_expr:	'~' unary_expr { $$ = op_not($2); }
-	|	'-' unary_expr { $$ = op_neg($2); }
-	|	primary        { $$ = $1; }
-	;
+neg_expr:    '-' neg_expr { $$ = op_neg($2); }
+    |    not_expr       { $$ = $1; }
+    ;
+
+not_expr:    '~' not_expr { $$ = op_not($2); }
+    |    primary        { $$ = $1; }
+    ;
 
 primary	:	'(' or_expr ')' { $$ = $2; }
 	|	NUM
