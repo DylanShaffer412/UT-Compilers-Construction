@@ -20,7 +20,7 @@ static int clamp(long long r) {
 }
 
  /*
- ** Arithmetic/bitwise helpers, one per operator. Each exits early
+ ** Mathematic/bitwise helpers, one per operator. Each exits early
  ** if an error already happened
  */
 static int op_add(int a, int b) { if (g_error) return 0; return clamp((long long)a + b); }
