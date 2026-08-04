@@ -1,0 +1,26 @@
+This project looks at how well machine learning models can predict NFL game
+outcomes using historical team data. Data is collected from Pro Football Reference
+(https://www.pro-football-reference.com) by exporting season-level team stats from the
+past ten years into CSV files and loading them into Pandas Data Frames. The dataset
+includes features such as points scored and allowed, total yards, turnover differential, and
+other overall team performance metrics.
+
+
+Because the data is at the team level rather than individual games, a game-level
+dataset is created by matching teams against each other and comparing their statistics
+(for example, differences in offensive production, defensive performance, and efficiency
+metrics). Additional feature engineering is applied to better represent team strength and
+relative advantages between opponents.
+
+
+Two models are developed and evaluated: logistic regression and a random forest
+classifier. Logistic regression serves as a simple and interpretable baseline, while the
+random forest model is used to capture more complex and nonlinear relationships in the
+data. Model performance is evaluated under different conditions, including varying feature
+sets and training data sizes.
+
+
+The goal of this project is to determine how effectively team-level statistics can be
+used to predict game outcomes and to identify which features are most useful in making
+those predictions, while also exploring the strengths and limitations of different modeling
+approaches.
