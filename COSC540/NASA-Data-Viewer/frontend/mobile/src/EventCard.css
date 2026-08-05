@@ -1,0 +1,48 @@
+.DailyEvents_EventCard {
+    background-color: rgba(63, 64, 69, 0.4);
+    backdrop-filter: blur(10px);                 
+    -webkit-backdrop-filter: blur(10px);         
+    border: 1px solid rgba(255, 255, 255, 0.2); 
+    border-radius: 8px;
+    margin: 16px 16px;
+    padding: 8px 16px;  
+    display: flex;
+    flex-direction: column;  
+    flex-wrap: wrap;         
+    overflow: hidden;        
+    box-sizing: border-box;  
+    align-items: flex-start;
+    transition: transform 0.2s ease;
+}
+
+.DailyEvents_EventCard:hover{
+    cursor: pointer;
+}
+
+.DailyEvents_EventCard .event_header{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.DailyEvents_EventCard p{
+    margin: 0;
+    font-size: 14px;
+    text-decoration: none;
+    color:inherit;
+}
+
+.DailyEvents_EventCard a{
+    margin: 0;
+    font-size: 16px;
+    text-decoration: none;
+    color:inherit;
+    line-height: 1;
+}
+
+.DailyEvents_EventCard .event_description{
+    text-align: left;
+    font-size: 12px;
+    margin: 0;
+    white-space: pre-line;
+}

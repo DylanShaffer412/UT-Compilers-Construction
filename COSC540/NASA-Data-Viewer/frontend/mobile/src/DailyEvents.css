@@ -1,0 +1,45 @@
+.dailyEventsPage{
+    flex: 1;
+    margin-bottom: 5rem;
+}
+
+.heroContainer{
+    background-color: rgba(63, 64, 69, 0.4);
+    border-radius: 8px;
+    margin-left: 14px;
+    margin-right: 14px;
+    margin-top: 16px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.heroLabelContainer{
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.luna {
+    width: 150px;
+    align-self: center;
+}
+
+.dailyEvents_EventContainer{
+    flex: 1;
+}
+
+@media(min-width: 800px){
+    .dailyEventsPage{
+        margin-left: 20%;
+        margin-right: 20%;
+    }
+
+    .luna{
+        margin-right: 25%;
+    }
+}

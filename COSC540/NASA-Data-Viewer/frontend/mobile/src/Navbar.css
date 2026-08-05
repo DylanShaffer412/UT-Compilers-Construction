@@ -1,0 +1,25 @@
+.topNav{
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    background-color: #3F4045;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    height: 48px;
+}
+
+/* apparently NavLink elements resolve to <a> elements when rendered*/
+.topNav a{ 
+    display: block;
+    color: inherit;
+    padding: 14px 16px;
+    text-decoration: none;
+}
+
+.topNav a.active{
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+}

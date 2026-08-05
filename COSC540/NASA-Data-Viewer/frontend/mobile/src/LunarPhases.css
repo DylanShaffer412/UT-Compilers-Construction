@@ -1,0 +1,217 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Share+Tech+Mono&display=swap');
+
+/* ── PAGE SHELL ── */
+.lunarPage {
+  flex: 1;
+  margin-bottom: 5rem;
+  padding: 0 14px;
+}
+
+/* ── HERO CARD (mirrors .heroContainer) ── */
+.lunarHero {
+  background-color: rgba(63, 64, 69, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  border-left: 6px solid #8fb6ff;
+  backdrop-filter: blur(8px);
+  margin-top: 16px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.lunarHeroText {}
+
+.lunarHeroEyebrow {
+  margin: 0 0 4px 0;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #3a5070;
+  text-transform: uppercase;
+}
+
+.lunarHeroPhase {
+  margin: 0 0 6px 0;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #d0e8ff;
+  text-transform: uppercase;
+}
+
+.lunarHeroCountdown {
+  margin: 0;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: #6888aa;
+}
+
+.lunarHeroMoon {
+  font-size: 56px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+/* ── SECTION TITLE (mirrors .wsSectionTitle) ── */
+.lunarSectionTitle {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8fb6ff;
+  margin: 24px 0 10px 0;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(100, 160, 255, 0.18);
+  font-family: 'Rajdhani', sans-serif;
+}
+
+/* ── PHASE CARDS (mirrors .DailyEvents_EventCard layout) ── */
+.lunarCards {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.lunarCard {
+  background-color: rgba(63, 64, 69, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  margin: 6px 0;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.2s ease;
+}
+
+/* coloured left accent stripe */
+.lunarCard::before {
+  content: "";
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--phase-color, #8fb6ff);
+  border-radius: 8px 0 0 8px;
+}
+
+.lunarCard.lunarCardPast {
+  opacity: 0.45;
+}
+
+.lunarCardIcon {
+  font-size: 32px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.lunarCardBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.lunarCardPhase {
+  margin: 0 0 3px 0;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--phase-color, #8fb6ff);
+}
+
+.lunarCardDate {
+  margin: 0 0 2px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #e0e2db;
+}
+
+.lunarCardTime {
+  margin: 0;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: #3a5070;
+}
+
+.lunarCardBadge {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--phase-color, #8fb6ff);
+  background: rgba(100, 160, 255, 0.08);
+  border: 1px solid rgba(100, 160, 255, 0.2);
+  border-radius: 4px;
+  padding: 3px 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── LOADING / ERROR (mirrors .daily-events__loading) ── */
+.lunarState {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 48px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #3a5070;
+  justify-content: center;
+}
+
+.lunarStateError {
+  color: #ff5555;
+}
+
+.lunarSpinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(143, 182, 255, 0.2);
+  border-top-color: #8fb6ff;
+  border-radius: 50%;
+  animation: lunarSpin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes lunarSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── DESKTOP TWEAKS ── */
+@media (min-width: 800px) {
+  .lunarPage {
+    margin-left: 20%;
+    margin-right: 20%;
+    padding: 0;
+  }
+
+  .lunarHeroMoon {
+    font-size: 72px;
+  }
+
+  .lunarHeroPhase {
+    font-size: 26px;
+  }
+
+  .lunarCard {
+    padding: 14px 20px;
+  }
+
+  .lunarCardIcon {
+    font-size: 38px;
+  }
+
+  .lunarCardDate {
+    font-size: 15px;
+  }
+}
