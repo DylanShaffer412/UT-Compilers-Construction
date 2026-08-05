@@ -1,0 +1,935 @@
+/*
+ * space-hud.css
+ * HUD stylesheet for the NASA Orbital Threat Monitor — fullscreen orrery
+ * with a frosted sidebar, severity-coded event list, and planet legend.
+ *
+ * 1. Fonts          5. Sidebar
+ * 2. Tokens         6. Event groups
+ * 3. Layout         7. Event items
+ * 4. Top bar        8. Footer  9. Legend  10. Tooltip  11. Mobile
+ */
+
+
+/* ── 1. Fonts ────────────────────────────────────────────────────────────────
+   Rajdhani → headings/labels   Share Tech Mono → data readouts   Exo 2 → body
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Exo+2:wght@200;300;400;600&display=swap');
+
+
+/* ── 2. Tokens ───────────────────────────────────────────────────────────────
+   All colours live here. Each severity level has three tokens:
+   -background (row tint), -border (left stripe), -text (badge label).
+   ─────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  --color-space-background:             #00000f;           /* near-black canvas fill */
+  --color-panel-background:             rgba(4, 12, 30, 0.82);
+  --color-panel-border:                 rgba(50, 110, 200, 0.28);
+  --color-panel-inner-glow:             rgba(30, 80, 180, 0.12);
+
+  --color-accent-blue:                  #3a8fff;
+  --color-accent-cyan:                  #00d4ff;           /* highest-priority chrome */
+  --color-accent-amber:                 #ffb300;           /* reserved for caution states */
+
+  --color-text-primary:                 #d0e8ff;
+  --color-text-secondary:               #6888aa;
+  --color-text-muted:                   #3a5070;           /* timestamps, footnotes */
+
+  --color-severity-critical-background: rgba(200, 20,  20,  0.18);
+  --color-severity-critical-border:     rgba(220, 40,  40,  0.6);
+  --color-severity-critical-text:       #ff5555;
+
+  --color-severity-high-background:     rgba(200, 100, 10,  0.18);
+  --color-severity-high-border:         rgba(255, 140, 0,   0.55);
+  --color-severity-high-text:           #ffaa33;
+
+  --color-severity-medium-background:   rgba(200, 160, 0,   0.14);
+  --color-severity-medium-border:       rgba(240, 200, 0,   0.4);
+  --color-severity-medium-text:         #ffe066;
+
+  --color-severity-low-background:      rgba(20,  80,  40,  0.14);
+  --color-severity-low-border:          rgba(40,  160, 80,  0.3);
+  --color-severity-low-text:            #44cc88;
+}
+
+
+/* ── 3. Layout ───────────────────────────────────────────────────────────────
+   .space-home fills the viewport below the app navbar (48 px).
+   .orrery-mount is an absolute fill so the Three.js canvas can take every pixel;
+   !important overrides the inline styles Three.js writes on <canvas>.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.space-home {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 48px);
+  background: var(--color-space-background);
+  overflow: hidden;
+  font-family: 'Exo 2', sans-serif;
+  color: var(--color-text-primary);
+}
+
+.orrery-mount {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.orrery-mount canvas {
+  display: block;
+  width:  100% !important;
+  height: 100% !important;
+}
+
+
+/* ── 4. Top bar ──────────────────────────────────────────────────────────────
+   52 px strip: logo left, optional alert banner centre, UTC clock right.
+   Gradient fade lets it blend into the starfield. pointer-events: none so
+   clicks pass through to the canvas; interactive children override locally.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.hud-topbar {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 0 24px;
+  background: linear-gradient(180deg, rgba(0,5,20,0.92) 0%, rgba(0,5,20,0) 100%);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.hud-logo {
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+}
+
+.hud-logo-nasa {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: 4px;
+  color: var(--color-accent-cyan);
+  text-shadow: 0 0 18px rgba(0, 212, 255, 0.7);
+}
+
+.hud-logo-sub {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--color-text-secondary);
+}
+
+.hud-clock {
+  margin-left: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  line-height: 1.2;
+}
+
+.hud-clock-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: var(--color-text-muted);
+}
+
+.hud-clock-value {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: var(--color-accent-cyan);
+  text-shadow: 0 0 8px rgba(0, 212, 255, 0.5);
+}
+
+.hud-alert-banner {
+  background: rgba(180, 0, 0, 0.25);
+  border: 1px solid rgba(255, 50, 50, 0.5);
+  border-radius: 3px;
+  padding: 4px 12px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: #ff6666;
+  letter-spacing: 1.5px;
+  animation: alert-banner-glow-pulse 1.8s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes alert-banner-glow-pulse {
+  0%,  100% { opacity: 1;   box-shadow: 0 0 8px  rgba(255,50,50,0.4); }
+  50%        { opacity: 0.7; box-shadow: 0 0 20px rgba(255,50,50,0.7); }
+}
+
+
+/* ── 5. Sidebar ──────────────────────────────────────────────────────────────
+   300 px frosted-glass panel docked left, between top bar and legend strip.
+   Flex column; footer pins to the bottom via margin-top: auto.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.space-sidebar {
+  position: absolute;
+  top: 52px; left: 0; bottom: 48px;
+  width: 300px;
+  transition: width 0.25s ease;
+  padding: 0 12px 16px;
+  background: var(--color-panel-background);
+  border-right: 1px solid var(--color-panel-border);
+  box-shadow:
+    inset -40px 0 60px var(--color-panel-inner-glow),
+    2px 0 30px rgba(0,0,0,0.5);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-text-muted) transparent;
+  z-index: 10;
+}
+
+.space-sidebar::-webkit-scrollbar       { width: 4px; }
+.space-sidebar::-webkit-scrollbar-track { background: transparent; }
+.space-sidebar::-webkit-scrollbar-thumb { background: var(--color-text-muted); border-radius: 4px; }
+
+.sidebar-scroll {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.space-sidebar--collapsed {
+  width: 28px;
+  padding: 16px 0;
+  overflow: hidden;
+}
+
+.space-sidebar--collapsed > *:not(.sidebar-collapse-btn) {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.sidebar-collapse-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 3px;
+  background: transparent;
+  border: 1px solid var(--color-panel-border);
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 11;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.sidebar-collapse-btn:hover {
+  border-color: var(--color-accent-cyan);
+  color: var(--color-accent-cyan);
+}
+
+.sidebar-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 13px;
+  letter-spacing: 3px;
+  color: var(--color-accent-cyan);
+  text-shadow: 0 0 12px rgba(0,212,255,0.5);
+  padding: 4px 4px 12px;
+  border-bottom: 1px solid var(--color-panel-border);
+  margin-bottom: 4px;
+  line-height: 1.3;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.sidebar-mode-toggle {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 8px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--color-panel-background);
+  padding-top: 16px;
+  margin-left: -12px;
+  margin-right: -12px;
+  padding-left: 12px;
+  padding-right: 12px;
+}
+
+.sidebar-mode-btn {
+  flex: 1;
+  padding: 6px 8px;
+  border-radius: 3px;
+  background: rgba(0, 10, 30, 0.5);
+  border: 1px solid var(--color-panel-border);
+  color: var(--color-text-secondary);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.sidebar-mode-btn--active {
+  border-color: rgba(0, 212, 255, 0.5);
+  color: var(--color-accent-cyan);
+  background: rgba(0, 212, 255, 0.06);
+}
+
+.sidebar-date {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+
+/* ── 6. Event groups ─────────────────────────────────────────────────────────
+   Collapsible cards grouping events by type. The header is a <button>;
+   JS toggles the .event-list open/closed and rotates .chevron.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.event-group {
+  border: 1px solid var(--color-panel-border);
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(0, 10, 30, 0.4);
+  transition: border-color 0.2s;
+}
+
+.event-group:hover {
+  border-color: rgba(60, 130, 220, 0.45);
+}
+
+.event-group-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 9px 10px;
+  background: rgba(20, 40, 80, 0.35);
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-primary);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: background 0.2s;
+}
+
+.event-group-header:hover {
+  background: rgba(40, 70, 130, 0.5);
+}
+
+.event-icon        { font-size: 16px; line-height: 1; }
+.event-type-label  { flex: 1; text-align: left; }
+
+.event-count {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  background: rgba(58, 143, 255, 0.2);
+  border: 1px solid rgba(58, 143, 255, 0.4);
+  border-radius: 10px;
+  padding: 1px 7px;
+  color: var(--color-accent-blue);
+}
+
+.chevron { font-size: 12px; color: var(--color-text-secondary); }
+
+.event-list {
+  padding: 4px 6px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.event-loading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--color-text-secondary);
+}
+
+.pulse-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--color-accent-cyan);
+  animation: dot-fade-pulse 1s ease-in-out infinite;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+@keyframes dot-fade-pulse {
+  0%,  100% { opacity: 1;   transform: scale(1);   }
+  50%        { opacity: 0.4; transform: scale(0.6); }
+}
+
+.event-empty {
+  padding: 10px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+
+/* ── 7. Event items ──────────────────────────────────────────────────────────
+   Each row: 2 px left border + background tint keyed to severity,
+   a top row with badge + timestamp, and a description line below.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.event-item {
+  border-radius: 3px;
+  padding: 7px 9px;
+  border-left: 2px solid transparent;
+  transition: background 0.15s;
+}
+
+.event-item:hover { filter: brightness(1.15); }
+
+.event-item-clickable { cursor: pointer; }
+
+.event-item.sev-critical { background: var(--color-severity-critical-background); border-left-color: var(--color-severity-critical-text); }
+.event-item.sev-high     { background: var(--color-severity-high-background);     border-left-color: var(--color-severity-high-text); }
+.event-item.sev-medium   { background: var(--color-severity-medium-background);   border-left-color: var(--color-severity-medium-text); }
+.event-item.sev-low      { background: var(--color-severity-low-background);      border-left-color: var(--color-severity-low-text); }
+
+.event-item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+/* border-color inherits from color via currentColor on the base rule */
+.sev-badge {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  padding: 1px 6px;
+  border-radius: 2px;
+  border: 1px solid currentColor;
+}
+
+.sev-badge.sev-critical { color: var(--color-severity-critical-text); }
+.sev-badge.sev-high     { color: var(--color-severity-high-text); }
+.sev-badge.sev-medium   { color: var(--color-severity-medium-text); }
+.sev-badge.sev-low      { color: var(--color-severity-low-text); }
+
+.event-time {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--color-text-muted);
+}
+
+.event-detail {
+  font-size: 11px;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+  font-family: 'Exo 2', sans-serif;
+}
+
+
+/* ── 8. Sidebar footer ───────────────────────────────────────────────────────
+   Attribution label left, API link right. Pinned to the bottom of the flex
+   column via margin-top: auto on this element.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--color-panel-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--color-text-muted);
+  letter-spacing: 1px;
+}
+
+.sidebar-link {
+  color: var(--color-accent-cyan);
+  text-decoration: none;
+  font-size: 10px;
+  transition: text-shadow 0.2s;
+}
+
+.sidebar-link:hover {
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.8);
+}
+
+
+/* ── 9. Planet legend ────────────────────────────────────────────────────────
+   40 px bar at the bottom, starting right of the sidebar. Dot colour is set
+   inline by JS; .legend-active brightens the label when a planet is selected.
+   pointer-events: none so the canvas stays interactive underneath.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.planet-legend {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  background: linear-gradient(0deg, rgba(0,5,20,0.9) 0%, rgba(0,5,20,0) 100%);
+  padding: 0 24px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--color-text-muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  transition: color 0.2s;
+}
+
+.legend-item.legend-active { color: var(--color-text-primary); }
+
+.legend-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 6px currentColor;
+}
+
+.legend-name { font-size: 9px; }
+
+
+/* ── 10. Planet tooltip ──────────────────────────────────────────────────────
+   Centred floating label shown on planet hover. JS toggles visibility;
+   CSS handles appearance and the short drop-in entrance.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.planet-tooltip {
+  position: absolute;
+  top: 64px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 4px;
+  color: var(--color-accent-cyan);
+  text-shadow: 0 0 16px rgba(0, 212, 255, 0.7);
+  text-transform: uppercase;
+  pointer-events: none;
+  z-index: 20;
+  animation: tooltip-fade-in-down 0.2s ease;
+}
+
+@keyframes tooltip-fade-in-down {
+  from { opacity: 0; transform: translateX(-50%) translateY(-8px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+
+/* ── 11. Mobile ──────────────────────────────────────────────────────────────
+   Below 768 px the sidebar becomes a bottom sheet (full width, 45 vh).
+   The planet legend is hidden — too small to tap and overlaps the sheet.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .space-sidebar {
+    width: 100%;
+    top: auto;
+    bottom: 0;
+    height: 45vh;
+    border-right: none;
+    border-top: 1px solid var(--color-panel-border);
+  }
+
+  .planet-legend { display: none; }
+}
+
+
+/* ── 12. Orbit settings widget ───────────────────────────────────────────────
+   Gear button docked bottom-right. Clicking it toggles an upward panel that
+   lists orbit-speed presets. pointer-events: auto overrides the canvas layer.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.orbit-settings {
+  position: absolute;
+  bottom: 12px;
+  right: 16px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.orbit-settings-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: var(--color-panel-background);
+  border: 1px solid var(--color-panel-border);
+  border-radius: 4px;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.orbit-settings-toggle:hover {
+  border-color: var(--color-accent-cyan);
+  color: var(--color-accent-cyan);
+}
+
+.orbit-settings-gear {
+  font-size: 14px;
+  line-height: 1;
+}
+
+.orbit-settings-label {
+  font-size: 9px;
+  letter-spacing: 2.5px;
+}
+
+.orbit-settings-panel {
+  background: var(--color-panel-background);
+  border: 1px solid var(--color-panel-border);
+  border-radius: 4px;
+  padding: 10px 10px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.6), inset 0 0 20px rgba(30, 80, 180, 0.08);
+  width: 180px;
+  animation: orbit-panel-slide-in 0.15s ease;
+}
+
+@keyframes orbit-panel-slide-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0);   }
+}
+
+.orbit-settings-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--color-text-muted);
+  padding: 0 4px 6px;
+  border-bottom: 1px solid var(--color-panel-border);
+  margin-bottom: 2px;
+}
+
+.orbit-speed-value {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: var(--color-accent-cyan);
+  letter-spacing: 1.5px;
+  text-align: center;
+  text-shadow: 0 0 8px rgba(0, 212, 255, 0.4);
+}
+
+.orbit-speed-slider {
+  width: 100%;
+  accent-color: var(--color-accent-cyan);
+  cursor: pointer;
+}
+
+.orbit-speed-ends {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--color-text-muted);
+  letter-spacing: 0.5px;
+}
+
+
+/* ── 13a. Visualization toggles (weather tab) ───────────────────────────────*/
+
+.viz-toggles {
+  padding: 8px;
+  border: 1px solid var(--color-panel-border);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.viz-toggles-label {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--color-text-muted);
+  padding: 0 4px 6px;
+  border-bottom: 1px solid var(--color-panel-border);
+  margin-bottom: 2px;
+}
+
+/* ── 13. Sidebar collapse tab ────────────────────────────────────────────────
+   A narrow tab anchored to the right edge of the sidebar so it's always
+   reachable whether the sidebar is expanded or collapsed.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.sidebar-tab {
+  position: absolute;
+  top: 72px;
+  left: 300px;
+  width: 18px;
+  height: 48px;
+  z-index: 11;
+  background: var(--color-panel-background);
+  border: 1px solid var(--color-panel-border);
+  border-left: none;
+  border-radius: 0 4px 4px 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: left 0.25s ease, color 0.2s, border-color 0.2s;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.sidebar-tab--collapsed {
+  left: 28px;
+}
+
+.sidebar-tab:hover {
+  color: var(--color-accent-cyan);
+  border-color: rgba(0, 212, 255, 0.4);
+}
+
+
+/* ── 14. Chain mode ──────────────────────────────────────────────────────────
+   Space-weather chain visualiser: four nodes (CME → wind → storm → aurora)
+   connected by arrows, plus causal-link cards and a history playback slider.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.chain-section-label {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  padding: 4px 2px 2px;
+  border-bottom: 1px solid var(--color-panel-border);
+}
+
+.chain-nodes {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chain-node-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.chain-node {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--color-panel-border);
+  background: rgba(0, 10, 30, 0.4);
+}
+
+.chain-node--nominal  { border-left: 3px solid var(--color-text-muted); }
+.chain-node--low      { border-left: 3px solid var(--color-severity-low-border); }
+.chain-node--medium   { border-left: 3px solid var(--color-severity-medium-border); }
+.chain-node--high     { border-left: 3px solid var(--color-severity-high-border); }
+.chain-node--critical { border-left: 3px solid var(--color-severity-critical-border); }
+
+.chain-node-icon {
+  font-size: 18px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.chain-node-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.chain-node-label {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--color-text-primary);
+  text-transform: uppercase;
+}
+
+.chain-node-status {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.chain-status--nominal  { color: var(--color-text-muted); }
+.chain-status--low      { color: var(--color-severity-low-text); }
+.chain-status--medium   { color: var(--color-severity-medium-text); }
+.chain-status--high     { color: var(--color-severity-high-text); }
+.chain-status--critical { color: var(--color-severity-critical-text); }
+
+.chain-arrow {
+  font-size: 14px;
+  color: var(--color-text-muted);
+  line-height: 1;
+  padding: 2px 0;
+}
+
+/* Causal link cards */
+
+.causal-link-card {
+  border: 1px solid var(--color-panel-border);
+  border-radius: 4px;
+  padding: 8px 10px;
+  background: rgba(0, 10, 30, 0.4);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.causal-link-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.causal-link-confidence {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--color-accent-cyan);
+  letter-spacing: 0.5px;
+}
+
+.causal-link-travel {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--color-text-muted);
+}
+
+.causal-link-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.causal-link-type {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  padding: 1px 6px;
+  border-radius: 2px;
+  border: 1px solid currentColor;
+  flex-shrink: 0;
+}
+
+.causal-type--cme   { color: var(--color-severity-high-text); }
+.causal-type--storm { color: var(--color-severity-medium-text); }
+
+.causal-link-time {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--color-text-secondary);
+}
+
+.causal-link-speed {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--color-text-muted);
+  text-align: right;
+}
+
+/* History playback */
+
+.history-playback {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 6px 2px;
+}
+
+.playback-ends {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  color: var(--color-text-muted);
+  letter-spacing: 1px;
+}
+
+.playback-slider {
+  width: 100%;
+  accent-color: var(--color-accent-cyan);
+  cursor: pointer;
+}
+
+.playback-date {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  color: var(--color-accent-cyan);
+  letter-spacing: 2px;
+  text-align: center;
+}
+
+.playback-summary {
+  display: flex;
+  justify-content: space-between;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  color: var(--color-text-secondary);
+}
+
+.playback-links {
+  color: var(--color-accent-blue);
+}

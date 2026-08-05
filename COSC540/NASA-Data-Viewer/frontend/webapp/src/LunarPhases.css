@@ -1,0 +1,314 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap');
+
+.lunar-page {
+  width: 100%;
+  min-height: calc(100vh - 48px);
+  background: #00000f;
+  padding: 32px 40px 64px;
+  color: #e8f1ff;
+  overflow-x: hidden;
+}
+
+/* ── HEADER ── */
+.lunar-header {
+  margin-bottom: 36px;
+}
+
+.lunar-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700;
+  font-size: 28px;
+  letter-spacing: 6px;
+  color: #d0e8ff;
+  text-shadow: 0 0 30px rgba(180, 200, 255, 0.3);
+  margin: 0 0 6px 0;
+}
+
+.lunar-subtitle {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #3a5070;
+  margin: 0;
+}
+
+/* ── CYCLE TRACK ── */
+.lunar-track {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 48px;
+  position: relative;
+}
+
+.lunar-track-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(100, 160, 255, 0.2), transparent);
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  z-index: 0;
+  transform: translateY(-50%);
+}
+
+.lunar-track-node {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.lunar-moon-icon {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: default;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  position: relative;
+}
+
+.lunar-moon-icon.is-next {
+  border-color: rgba(200, 220, 255, 0.35);
+  box-shadow: 0 0 28px rgba(160, 200, 255, 0.25);
+}
+
+.lunar-moon-icon:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 40px rgba(160, 200, 255, 0.4);
+}
+
+.lunar-node-label {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: #8fb6ff;
+  text-align: center;
+}
+
+.lunar-node-date {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: #3a5070;
+  text-align: center;
+}
+
+.lunar-node-time {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: #3a5070;
+  text-align: center;
+  margin-top: -12px;
+}
+
+/* ── NEXT PHASE BANNER ── */
+.lunar-next-banner {
+  background: rgba(63, 64, 69, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-left: 3px solid #8fb6ff;
+  border-radius: 10px;
+  padding: 1.1rem 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  backdrop-filter: blur(8px);
+  margin-bottom: 2.5rem;
+}
+
+.lunar-next-eyebrow {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: #3a5070;
+  text-transform: uppercase;
+  margin: 0 0 4px 0;
+}
+
+.lunar-next-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #d0e8ff;
+  margin: 0;
+}
+
+.lunar-next-countdown {
+  text-align: right;
+}
+
+.lunar-next-countdown-value {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 36px;
+  font-weight: 700;
+  color: #8fb6ff;
+  line-height: 1;
+}
+
+.lunar-next-countdown-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #3a5070;
+}
+
+/* ── DETAIL CARDS ── */
+.lunar-section-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #8fb6ff;
+  margin: 0 0 1rem 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(100, 160, 255, 0.18);
+  font-family: 'Rajdhani', sans-serif;
+}
+
+.lunar-cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.lunar-card {
+  background: rgba(63, 64, 69, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.25rem;
+  backdrop-filter: blur(6px);
+  transition: transform 0.2s ease, background 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.lunar-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--phase-color, rgba(100, 160, 255, 0.4));
+}
+
+.lunar-card:hover {
+  transform: translateY(-3px);
+  background: rgba(63, 64, 69, 0.44);
+}
+
+.lunar-card-icon {
+  font-size: 36px;
+  margin-bottom: 12px;
+  display: block;
+  line-height: 1;
+}
+
+.lunar-card-phase {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--phase-color, #8fb6ff);
+  margin: 0 0 4px 0;
+}
+
+.lunar-card-datetime {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 1px;
+  color: #a8c4ff;
+  margin: 0 0 12px 0;
+  line-height: 1.6;
+}
+
+.lunar-card-divider {
+  height: 1px;
+  background: rgba(100, 160, 255, 0.1);
+  margin: 10px 0;
+}
+
+.lunar-card-meta {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: #3a5070;
+  text-transform: uppercase;
+}
+
+.lunar-card-meta span {
+  color: #6888aa;
+}
+
+/* ── LOADING / ERROR ── */
+.lunar-state {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 48px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #3a5070;
+  justify-content: center;
+}
+
+.lunar-state-error {
+  color: #ff5555;
+}
+
+.lunar-spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(180, 200, 255, 0.2);
+  border-top-color: #8fb6ff;
+  border-radius: 50%;
+  animation: lunarspin 0.8s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes lunarspin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .lunar-page { padding: 24px 20px 48px; }
+
+  .lunar-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .lunar-moon-icon {
+    width: 64px;
+    height: 64px;
+    font-size: 34px;
+  }
+}
+
+@media (max-width: 600px) {
+  .lunar-track {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  .lunar-track-line { display: none; }
+
+  .lunar-cards {
+    grid-template-columns: 1fr;
+  }
+}

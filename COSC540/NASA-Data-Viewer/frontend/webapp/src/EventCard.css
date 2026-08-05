@@ -1,0 +1,85 @@
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600&family=Share+Tech+Mono&family=Exo+2:wght@300;400&display=swap');
+
+.event-card {
+  background: rgba(4, 12, 30, 0.85);
+  border: 1px solid rgba(50, 110, 200, 0.25);
+  border-radius: 4px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.event-card:hover {
+  border-color: rgba(0, 212, 255, 0.4);
+  box-shadow: 0 0 16px rgba(0, 212, 255, 0.08);
+}
+
+.event-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: rgba(20, 40, 80, 0.5);
+  border-bottom: 1px solid rgba(50, 110, 200, 0.2);
+}
+
+.event-card__type {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #00d4ff;
+}
+
+.event-card__class {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 12px;
+  color: #ffb300;
+  background: rgba(255, 179, 0, 0.1);
+  border: 1px solid rgba(255, 179, 0, 0.3);
+  border-radius: 2px;
+  padding: 1px 7px;
+}
+
+.event-card__body {
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.event-card__row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.event-card__label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #3a5070;
+  flex-shrink: 0;
+}
+
+.event-card__value {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 11px;
+  color: #d0e8ff;
+  text-align: right;
+}
+
+.event-card__note {
+  font-family: 'Exo 2', sans-serif;
+  font-size: 11px;
+  color: #6888aa;
+  line-height: 1.5;
+  padding-top: 4px;
+  border-top: 1px solid rgba(50, 110, 200, 0.15);
+  margin-top: 2px;
+}
+
+/* Type variants */
+.event-card--flr { border-left: 2px solid #ffaa33; }
+.event-card--cme { border-left: 2px solid #3a8fff; }
+.event-card--gst { border-left: 2px solid #aa66ff; }
