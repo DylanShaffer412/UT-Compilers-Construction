@@ -1,0 +1,14 @@
+{
+  "name": "nasa-frontend",
+  "private": true,
+  "version": "0.0.0",
+  "workspaces": ["mobile", "webapp"],
+  "scripts": {
+    "dev": "npm run dev --workspace=mobile & npm run dev --workspace=webapp",
+    "dev:mobile": "npm run dev --workspace=mobile",
+    "dev:webapp": "npm run dev --workspace=webapp",
+    "build": "npm run build --workspace=mobile && npm run build --workspace=webapp",
+    "build:mobile": "npm run build --workspace=mobile",
+    "build:webapp": "npm run build --workspace=webapp"
+  }
+}
