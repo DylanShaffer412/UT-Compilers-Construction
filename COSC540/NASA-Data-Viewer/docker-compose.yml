@@ -1,0 +1,53 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: space-weather-postgres
+    environment:
+      POSTGRES_USER_FILE: /run/secrets/postgres_user
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+      POSTGRES_DB_FILE: /run/secrets/postgres_db
+    secrets:
+      - postgres_user
+      - postgres_password
+      - postgres_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $(cat /run/secrets/postgres_user) -d $(cat /run/secrets/postgres_db)"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - space-weather-net
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: space-weather-pgadmin
+    env_file:
+      - .env
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "5050:80"
+    depends_on:
+      - postgres
+    networks:
+      - space-weather-net
+
+secrets:
+  postgres_user:
+    file: ./.secrets/postgres_user.txt
+  postgres_password:
+    file: ./.secrets/postgres_password.txt
+  postgres_db:
+    file: ./.secrets/postgres_db.txt
+
+volumes:
+  pgdata:
+
+networks:
+  space-weather-net:
+    name: space-weather-net

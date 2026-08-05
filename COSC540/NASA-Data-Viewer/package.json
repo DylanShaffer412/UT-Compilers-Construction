@@ -1,0 +1,16 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "AstroMetrics is a containerized full-stack application that:\r - loads NASA and Navy data into PostgreSQL\r - serves backend API endpoints with FastAPI\r - runs a React/Vite frontend\r - includes pgAdmin for inspecting the database",
+  "main": "index.js",
+  "type": "module",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
